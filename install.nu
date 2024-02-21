@@ -26,12 +26,12 @@ if ((rustc --version | split row ' ' | get 1 | into string) != $min_version) {
 
 # print (!(command_exists 'cargo'))
 if ((command_exists 'cargo') == 1) {
-    if ((command_exists 'zoxide') == 1) {
+    if ((command_exists 'zoxide') == 0) {
         print "Installing Zoxide..."
         install_package 'zoxide'
     }
 
-    if ((command_exists 'starship') == 1) {
+    if ((command_exists 'starship') == 0) {
         print "Installing starship 🚀..."
         install_package 'starship'
     }
