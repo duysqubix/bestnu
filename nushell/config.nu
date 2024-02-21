@@ -7,7 +7,10 @@
 # And here is the theme collection
 # https://github.com/nushell/nu_scripts/tree/main/themes
 
+
 source ~/.zoxide.nu
+source ~/.config/nushell/commands.nu 
+
 use ~/.cache/starship/init.nu
 alias cat = bat
 
@@ -848,3 +851,5 @@ export-env {
                   | upsert keybindings ($env.config.keybindings | append [(__zoxide_keybinding) (__edit_keybinding)])
                   )
 }
+
+
