@@ -38,4 +38,4 @@ if ((command_exists 'cargo') == 1) {
 }
 
 print "Installing nu configurations..."
-cp -v --recursive --preserve [mode] nushell $dir
+cp -v --recursive --preserve [mode] nushell/* $dir

@@ -7,7 +7,11 @@
 # And here is the theme collection
 # https://github.com/nushell/nu_scripts/tree/main/themes
 
-let cobalt_theme = export def main [] { return {
+source ~/.zoxide.nu
+use ~/.cache/starship/init.nu
+alias cat = bat
+
+let cobalt_theme = {
     separator: "#ba46b2"
     leading_trailing_space_bg: { attr: "n" }
     header: { fg: "#3ba5ff" attr: "b" }
@@ -88,7 +92,7 @@ let cobalt_theme = export def main [] { return {
     background: "#142838"
     foreground: "#8ff586"
     cursor: "#8ff586"
-}}
+}
 
 # External completer example
 # let carapace_completer = {|spans|
@@ -109,7 +113,7 @@ $env.config = {
     }
 
     table: {
-        mode: with_love # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
+        mode: reinforced # basic, compact, compact_double, light, thin, with_love, rounded, reinforced, heavy, none, other
         index_mode: always # "always" show indexes, "never" show indexes, "auto" = show indexes when a table has "index" column
         show_empty: true # show 'empty list' and 'empty record' placeholders for command output
         padding: { left: 1, right: 1 } # a left right padding of each column in a table
@@ -792,5 +796,55 @@ $env.config = {
         }
     ]
 }
-source ~/.zoxide.nu
-use ~/.cache/starship/init.nu
+
+def __zoxide_menu [] {
+    {
+      name: zoxide_menu
+      only_buffer_difference: true
+      marker: "| "
+      type: {
+          layout: columnar
+          page_size: 20
+      }
+      style: {
+          text: green
+          selected_text: green_reverse
+          description_text: yellow
+      }
+      source: { |buffer, position|
+          zoxide query -ls $buffer
+          | parse -r '(?P<description>[0-9]+) (?P<value>.+)'
+      }
+    }
+}
+
+def __zoxide_keybinding [] {
+    {
+      name: zoxide_menu
+      modifier: control
+      keycode: char_o
+      mode: [emacs, vi_normal, vi_insert]
+      event: [
+        { send: menu name: zoxide_menu }
+      ]
+    }
+}
+
+def __edit_keybinding [] {
+    {
+      name: edit
+      modifier: alt
+      keycode: char_e
+      mode: [emacs, vi_normal, vi_insert]
+      event: [
+        { send: OpenEditor }
+      ]
+    }
+}
+
+export-env {
+    $env.config  = ($env.config
+                  | upsert menus ($env.config.menus | append (__zoxide_menu))
+                  | upsert keybindings ($env.config.keybindings | append [(__zoxide_keybinding) (__edit_keybinding)])
+                  )
+}
